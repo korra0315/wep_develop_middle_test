@@ -2,15 +2,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const scheduleContent = document.getElementById('schedule-content');
     const addScheduleBtn = document.getElementById('add-schedule-btn');
 
-    // Mock user ID for now
-    const userId = 'testuser';
+    let userId = null;
+
+    async function fetchUser() {
+        try {
+            const response = await fetch('/api/user');
+            if (response.ok) {
+                const user = await response.json();
+                userId = user.id;
+                fetchSchedules();
+            } else {
+                // Not logged in
+                scheduleContent.innerHTML = '<p><a href="/login.html">로그인</a>하여 일정을 관리하세요.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching user:', error);
+        }
+    }
 
     async function fetchSchedules() {
+        if (!userId) return;
         try {
             const response = await fetch(`/api/schedules/${userId}`);
             if (response.ok) {
                 const schedules = await response.json();
                 scheduleContent.innerHTML = '';
+                if (schedules.length === 0) {
+                    scheduleContent.innerHTML = '<p>아무 일정도 없습니다 +버튼을 눌러 새로운 여행 기획하기!!</p>';
+                }
                 schedules.forEach(scheduleData => {
                     new Schedule(scheduleContent, scheduleData);
                 });
@@ -25,7 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (addScheduleBtn) {
         addScheduleBtn.addEventListener('click', () => {
-            new Schedule(scheduleContent);
+            if (userId) {
+                new Schedule(scheduleContent);
+            }
+            else {
+                alert("로그인이 필요합니다.");
+            }
         });
     }
 
@@ -36,8 +60,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.isEditing = !data;
             this.element = document.createElement('div');
             this.element.classList.add('schedule-item');
+            if (this.isEditing) {
+                this.container.innerHTML = ''; // Clear the container for the new schedule form
+            }
             this.container.appendChild(this.element);
             this.render();
+            this.attachEventListeners();
         }
 
         render() {
@@ -63,8 +91,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <button class="add-date-btn">+ 날짜 추가</button>
                 <button class="save-schedule-btn">일정 저장하기</button>
             `;
-            this.populateTimeSelects();
-            this.attachEventListeners();
         }
 
         getDateSectionHTML(date, items) {
@@ -131,16 +157,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <button class="delete-schedule-btn">일정삭제하기</button>
                 <button class="edit-schedule-btn">일정수정하기</button>
             `;
-            this.attachEventListeners();
         }
 
         attachEventListeners() {
-            this.element.querySelector('.add-date-btn')?.addEventListener('click', () => this.addDateSection());
-            this.element.querySelectorAll('.add-item-btn').forEach(btn => btn.addEventListener('click', (e) => this.addItem(e.target)));
-            this.element.querySelectorAll('.remove-item-btn').forEach(btn => btn.addEventListener('click', (e) => this.removeItem(e.target)));
-            this.element.querySelector('.save-schedule-btn')?.addEventListener('click', () => this.save());
-            this.element.querySelector('.edit-schedule-btn')?.addEventListener('click', () => this.edit());
-            this.element.querySelector('.delete-schedule-btn')?.addEventListener('click', () => this.delete());
+            this.element.addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-date-btn')) this.addDateSection();
+                if (e.target.classList.contains('add-item-btn')) this.addItem(e.target);
+                if (e.target.classList.contains('remove-item-btn')) this.removeItem(e.target);
+                if (e.target.classList.contains('save-schedule-btn')) this.save();
+                if (e.target.classList.contains('edit-schedule-btn')) this.edit();
+                if (e.target.classList.contains('delete-schedule-btn')) this.delete();
+            });
         }
 
         addDateSection() {
@@ -148,7 +175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const newDateSection = document.createElement('div');
             newDateSection.innerHTML = this.getDateSectionHTML('', []);
             itineraryBox.appendChild(newDateSection.firstElementChild);
-            this.populateTimeSelects();
         }
 
         addItem(button) {
@@ -156,7 +182,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const newItem = document.createElement('div');
             newItem.innerHTML = this.getItineraryItemHTML({ text: '', startTime: '09:00', endTime: '10:00' });
             itineraryItems.appendChild(newItem.firstElementChild);
-            this.populateTimeSelects();
         }
 
         removeItem(button) {
@@ -169,6 +194,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         async delete() {
+            if (!userId) return;
             try {
                 const response = await fetch(`/api/schedules/${userId}/${this.data.id}`, { method: 'DELETE' });
                 if (response.ok) {
@@ -183,19 +209,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         async save() {
+            if (!userId) return;
+
             const title = this.element.querySelector('.schedule-title').value;
             const items = [];
+            let dateMissing = false;
             this.element.querySelectorAll('.date-section').forEach(dateSection => {
                 const date = dateSection.querySelector('.date-input').value;
+                if (!date) {
+                    dateMissing = true;
+                }
                 dateSection.querySelectorAll('.itinerary-item').forEach(itemEl => {
                     const text = itemEl.querySelector('.itinerary-text').value;
                     const startTime = `${itemEl.querySelector('.start-hour').value}:${itemEl.querySelector('.start-minute').value}`;
                     const endTime = `${itemEl.querySelector('.end-hour').value}:${itemEl.querySelector('.end-minute').value}`;
-                    if (text && date) {
+                    if (text) { // Only add items with content
                         items.push({ date, text, startTime, endTime });
                     }
                 });
             });
+
+            if (dateMissing) {
+                alert('날짜를 입력해주세요');
+                return;
+            }
 
             this.data.title = title;
             this.data.items = items;
@@ -209,6 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (response.ok) {
                     this.isEditing = false;
                     this.render();
+                    fetchSchedules();
                 } else {
                     alert('일정 저장에 실패했습니다.');
                 }
@@ -235,11 +273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             return options;
         }
-
-        populateTimeSelects() {
-            // No longer needed as options are generated directly in the HTML
-        }
     }
 
-    fetchSchedules();
+    fetchUser();
 });

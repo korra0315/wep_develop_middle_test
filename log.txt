@@ -1,4 +1,4 @@
-[2025-10-26T09:38:10.625Z] Server started
-[2025-10-26T09:38:21.468Z] User login successful: korra0315
-[2025-10-26T09:40:02.035Z] Schedule created: ㅁㄴㅇ
-[2025-10-26T09:40:02.085Z] Schedule deleted: ㅁㄴㅇ
+[2025-10-26T10:31:34.560Z] Server started
+[2025-10-26T10:31:43.854Z] User login successful: korra0315
+[2025-10-26T10:32:28.510Z] Schedule updated: ㅁㄴㅇ
+[2025-10-26T12:54:16.693Z] Schedule updated: ㅁㄴㅇ

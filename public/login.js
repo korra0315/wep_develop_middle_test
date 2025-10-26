@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailIdError = document.getElementById('email-id-error');
     const passwordError = document.getElementById('password-error');
 
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         emailIdError.textContent = '';
         passwordError.textContent = '';
@@ -13,22 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailId = emailIdInput.value;
         const password = passwordInput.value;
 
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ emailId, password })
-        });
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const user = users.find(u => (u.id === emailId || u.email === emailId) && u.password === password);
 
-        if (response.ok) {
+        if (user) {
+            sessionStorage.setItem('user', JSON.stringify(user));
             window.location.href = '/';
         } else {
-            const errorData = await response.json();
-            if (errorData.field === 'email-id') {
-                emailIdError.textContent = errorData.message;
-            } else if (errorData.field === 'password') {
-                passwordError.textContent = errorData.message;
+            const existingUser = users.find(u => u.id === emailId || u.email === emailId);
+            if (!existingUser) {
+                emailIdError.textContent = 'ID 또는 이메일이 존재하지 않습니다';
+            } else {
+                passwordError.textContent = '비밀번호가 일치하지 않습니다';
             }
         }
     });

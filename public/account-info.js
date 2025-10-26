@@ -1,9 +1,8 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     const userInfoDiv = document.getElementById('user-info');
+    const user = JSON.parse(sessionStorage.getItem('user'));
 
-    const response = await fetch('/api/user');
-    if (response.ok) {
-        const user = await response.json();
+    if (user) {
         userInfoDiv.innerHTML = `
             <p><strong>이름:</strong> ${user.firstName}</p>
             <p><strong>성:</strong> ${user.lastName}</p>

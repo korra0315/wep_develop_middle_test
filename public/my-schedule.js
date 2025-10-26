@@ -1,45 +1,29 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     const scheduleContent = document.getElementById('schedule-content');
     const addScheduleBtn = document.getElementById('add-schedule-btn');
 
     let userId = null;
+    const user = JSON.parse(sessionStorage.getItem('user'));
 
-    async function fetchUser() {
-        try {
-            const response = await fetch('/api/user');
-            if (response.ok) {
-                const user = await response.json();
-                userId = user.id;
-                fetchSchedules();
-            } else {
-                // Not logged in
-                scheduleContent.innerHTML = '<p><a href="/login.html">로그인</a>하여 일정을 관리하세요.</p>';
-            }
-        } catch (error) {
-            console.error('Error fetching user:', error);
-        }
+    if (user) {
+        userId = user.id;
+        fetchSchedules();
+    } else {
+        scheduleContent.innerHTML = '<p><a href="/login.html">로그인</a>하여 일정을 관리하세요.</p>';
     }
 
-    async function fetchSchedules() {
+    function fetchSchedules() {
         if (!userId) return;
-        try {
-            const response = await fetch(`/api/schedules/${userId}`);
-            if (response.ok) {
-                const schedules = await response.json();
-                scheduleContent.innerHTML = '';
-                if (schedules.length === 0) {
-                    scheduleContent.innerHTML = '<p>아무 일정도 없습니다 +버튼을 눌러 새로운 여행 기획하기!!</p>';
-                }
-                schedules.forEach(scheduleData => {
-                    new Schedule(scheduleContent, scheduleData);
-                });
-            } else {
-                scheduleContent.innerHTML = '<p>아무 일정도 없습니다 +버튼을 눌러 새로운 여행 기획하기!!</p>';
-            }
-        } catch (error) {
-            console.error('Error fetching schedules:', error);
-            scheduleContent.innerHTML = '<p>일정을 불러오는 중 오류가 발생했습니다.</p>';
+        const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
+        const userSchedules = allSchedules.schedules[userId] || [];
+
+        scheduleContent.innerHTML = '';
+        if (userSchedules.length === 0) {
+            scheduleContent.innerHTML = '<p>아무 일정도 없습니다 +버튼을 눌러 새로운 여행 기획하기!!</p>';
         }
+        userSchedules.forEach(scheduleData => {
+            new Schedule(scheduleContent, scheduleData);
+        });
     }
 
     if (addScheduleBtn) {
@@ -193,22 +177,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.render();
         }
 
-        async delete() {
+        delete() {
             if (!userId) return;
-            try {
-                const response = await fetch(`/api/schedules/${userId}/${this.data.id}`, { method: 'DELETE' });
-                if (response.ok) {
+            const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
+            if (allSchedules.schedules[userId]) {
+                const index = allSchedules.schedules[userId].findIndex(s => s.id === this.data.id);
+                if (index !== -1) {
+                    allSchedules.schedules[userId].splice(index, 1);
+                    localStorage.setItem('schedules', JSON.stringify(allSchedules));
                     this.element.remove();
-                } else {
-                    alert('일정 삭제에 실패했습니다.');
                 }
-            } catch (error) {
-                console.error('Error deleting schedule:', error);
-                alert('일정 삭제 중 오류가 발생했습니다.');
             }
         }
 
-        async save() {
+        save() {
             if (!userId) return;
 
             const title = this.element.querySelector('.schedule-title').value;
@@ -237,23 +219,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.data.title = title;
             this.data.items = items;
 
-            try {
-                const response = await fetch(`/api/schedules/${userId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(this.data),
-                });
-                if (response.ok) {
-                    this.isEditing = false;
-                    this.render();
-                    fetchSchedules();
-                } else {
-                    alert('일정 저장에 실패했습니다.');
-                }
-            } catch (error) {
-                console.error('Error saving schedule:', error);
-                alert('일정 저장 중 오류가 발생했습니다.');
+            const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
+            if (!allSchedules.schedules[userId]) {
+                allSchedules.schedules[userId] = [];
             }
+
+            const index = allSchedules.schedules[userId].findIndex(s => s.id === this.data.id);
+            if (index !== -1) {
+                allSchedules.schedules[userId][index] = this.data;
+            } else {
+                allSchedules.schedules[userId].push(this.data);
+            }
+
+            localStorage.setItem('schedules', JSON.stringify(allSchedules));
+            this.isEditing = false;
+            this.render();
+            fetchSchedules();
         }
 
         getHourOptions(selectedHour) {
@@ -274,6 +255,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             return options;
         }
     }
-
-    fetchUser();
 });

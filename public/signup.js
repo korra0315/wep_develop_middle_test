@@ -47,25 +47,16 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     return;
   }
 
-  try {
-    const response = await fetch('/api/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ firstName, lastName, id, password, phone, email })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert('계정이 생성되었습니다.');
-      window.location.href = 'index.html';
-    } else {
-      alert(`계정 생성 실패: ${result.error}`);
-    }
-  } catch (error) {
-    console.error('Error during signup:', error);
-    alert('계정 생성 중 오류가 발생했습니다.');
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  if (users.find(user => user.id === id)) {
+    alert('이미 존재하는 아이디입니다.');
+    return;
   }
+
+  const newUser = { firstName, lastName, id, password, phone, email };
+  users.push(newUser);
+  localStorage.setItem('users', JSON.stringify(users));
+
+  alert('계정이 생성되었습니다.');
+  window.location.href = 'index.html';
 });

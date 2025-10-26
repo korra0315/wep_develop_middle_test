@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +7,65 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Travel Planner</h1>
+  <header>
+    <div class="logo">Travel Planner</div>
+    <nav>
+      <button class="login-btn">로그인</button>
+    </nav>
+  </header>
 
-  <div id="trip-list"></div>
+  <main>
+    <div class="banner-container">
+      <div class="banner-slide">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h2>새로운 일정 추가하기</h2>
+            <button class="banner-btn">이동하기</button>
+          </div>
+          <div class="banner-image"></div>
+        </div>
+      </div>
+      <div class="banner-slide">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h2>최저가 숙박업체</h2>
+            <button class="banner-btn">이동하기</button>
+          </div>
+          <div class="banner-image"></div>
+        </div>
+      </div>
+      <div class="banner-slide">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h2>최저가 항공편</h2>
+            <button class="banner-btn">이동하기</button>
+          </div>
+          <div class="banner-image"></div>
+        </div>
+      </div>
+    </div>
 
+    <div class="bottom-section">
+      <div class="announcements">
+        <h2>공지사항</h2>
+        <ul>
+          <li>[공지] 새로운 기능 업데이트 안내</li>
+          <li>[공지] 서버 점검 안내 (01:00 - 02:00)</li>
+          <li>[공지] 개인정보처리방침 변경 안내</li>
+        </ul>
+      </div>
+
+      <div class="upcoming-schedules">
+        <h2>가까운 일정</h2>
+        <div id="trip-list">
+          <!-- Trip list will be populated by app.js -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 기존 여행 추가 폼은 일단 주석 처리 -->
+  <!--
   <form id="new-trip-form">
     <h2>Add a New Trip</h2>
     <input type="text" id="title" placeholder="Trip Title" required>
@@ -19,6 +73,7 @@
     <input type="date" id="end-date" required>
     <button type="submit">Add Trip</button>
   </form>
+  -->
 
   <script src="app.js"></script>
 </body>

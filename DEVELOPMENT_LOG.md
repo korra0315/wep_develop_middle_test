@@ -4,7 +4,7 @@
 ### week1
 #### Day 1 -프로젝트 기획- **작업내용**
 
-## 질:나는 gmini CLI를 통해 여행계획 플래너를 만들려고해 Frontend는 vanilla js styling 은 css modules backend는 node.js를 이용할거야 gemini CLI에 사용되는 gemini.md파일 만들어줘
+## 질:나는 gmini CLI를 통해 여행계획 플래너를 만들려고해 Frontend는 vanilla js styling 은 css modules backend는 node.js를 이용할거야 gemini CLI에 사용되는 gemini.md파일 만들어줘 이후 다음 명령어를 gemini에 넣고 나온 프로그램을 첫커밋
 
 ### 답:좋습니다. 요청하신 '여행 계획 플래너' 프로젝트를 위한 gemini.md 파일입니다.
 
@@ -59,5 +59,7 @@
 - `style.css` (or modular CSS files):
   - CSS Modules 원칙에 따라 각 컴포넌트(예: `.trip-item`, `.trip-form`)에 대한 스타일을 정의합니다.
 
-## gemini CLI에 위 프롬폼트 넣고 동작 
+## git에 파일 올릴때 누락된 파일이 있어 누락된 파일 추가하고 다시 커밋
+
+##  디자인 할건데 오른쪽위에는 로그인 버튼을 추가하고 홈페이지 가운데 상단 부분에 배너를 배치하고 배너에는 새로운 일정 추가하기, 최저가 숙박업체, 최저가 항공편 을 메인 베너로 각각 띄울건데 일정 시간마다 배너가 돌아가도록 디자인 배너에 들어가는 글자들은 크게 왼편에 띄우고 아래 이동하기 버튼을 따로 추가하고 오른쪽에서는 사진이나 그림이 들어갈수있는 공간을 추가하고 홈페이지 아래에는 공지사항을 리스트 형식으로 최근것 최대 3개까지 띄우고 생성된 일정중에 가장 가까운 일정을 순서대로 보여주도록 생성해줘
 

@@ -21,6 +21,52 @@ document.addEventListener('DOMContentLoaded', () => {
     showSlides();
   }
 
+  const userDropdown = document.querySelector('.user-dropdown');
+  const signupBtn = document.querySelector('.signup-btn');
+
+  const checkUserStatus = async () => {
+    try {
+      const response = await fetch('/api/user');
+      if (response.ok) {
+        const user = await response.json();
+        renderLoggedIn(user);
+      } else {
+        renderLoggedOut();
+      }
+    } catch (error) {
+      console.error('Error checking user status:', error);
+      renderLoggedOut();
+    }
+  };
+
+  const renderLoggedIn = (user) => {
+    userDropdown.innerHTML = `
+      <button class="user-btn">${user.id}</button>
+      <div class="dropdown-content">
+        <a href="/account-info">계정정보</a>
+        <a href="/my-schedule">내일정</a>
+        <a href="/logout">로그아웃</a>
+      </div>
+    `;
+    signupBtn.style.display = 'none';
+  };
+
+  const renderLoggedOut = () => {
+    userDropdown.innerHTML = '<button class="login-btn">로그인</button>';
+    signupBtn.style.display = 'block';
+
+    const loginBtn = document.querySelector('.login-btn');
+    loginBtn.addEventListener('click', () => {
+      window.location.href = '/login.html';
+    });
+  };
+  
+  signupBtn.addEventListener('click', () => {
+      window.location.href = '/signup.html';
+  });
+
+  checkUserStatus();
+
   // Trip list functionality
   const tripList = document.getElementById('trip-list');
   const apiUrl = '/api/trips';

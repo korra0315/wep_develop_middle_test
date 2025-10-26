@@ -1,7 +1,8 @@
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
+const session = require('express-session');
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3000;
@@ -23,6 +24,12 @@ logEvent('Server started');
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 let trips = [];
 let nextId = 1;
@@ -57,18 +64,54 @@ app.post('/api/signup', (req, res) => {
   res.status(201).json({ message: 'User created successfully' });
 });
 
-app.post('/api/login', (req, res) => {
-  const { id, password } = req.body;
-  const user = users.find(u => u.id === id && u.password === password);
+app.post('/login', (req, res) => {
+    const { emailId, password } = req.body;
+    const user = users.find(u => (u.id === emailId || u.email === emailId) && u.password === password);
 
-  if (user) {
-    logEvent(`User login successful: ${id}`);
-    res.json({ message: 'Login successful' });
-  } else {
-    logEvent(`User login failed: ${id}`);
-    res.status(401).json({ error: 'Invalid credentials' });
-  }
+    if (user) {
+        req.session.user = user;
+        logEvent(`User login successful: ${user.id}`);
+        res.json({ message: 'Login successful' });
+    } else {
+        logEvent(`User login failed: ${emailId}`);
+        const existingUser = users.find(u => u.id === emailId || u.email === emailId);
+        if (!existingUser) {
+            res.status(401).json({ field: 'email-id', message: 'ID or Email does not exist' });
+        } else {
+            res.status(401).json({ field: 'password', message: 'Password does not match' });
+        }
+    }
 });
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+app.get('/api/user', (req, res) => {
+    if (req.session.user) {
+        res.json(req.session.user);
+    } else {
+        res.status(401).json({ error: 'Not logged in' });
+    }
+});
+
+app.get('/account-info', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/public/account-info.html');
+    } else {
+        res.redirect('/login.html');
+    }
+});
+
+app.get('/my-schedule', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/public/my-schedule.html');
+    } else {
+        res.redirect('/login.html');
+    }
+});
+
 
 app.get('/api/trips', (req, res) => {
   res.json(trips);

@@ -1,0 +1,130 @@
+.checklist-main {
+    display: flex;
+}
+
+.checklist-section {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.checklist-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.checklist-category h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.add-checklist-btn {
+    margin-left: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.checklist-box {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.checklist-box.completed {
+    background-color: #f0f0f0;
+}
+
+.checklist-title-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding: 5px;
+}
+
+.checklist-title-input:focus {
+    outline: none;
+    border-bottom-color: #4CAF50;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.checklist-item input[type="text"] {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.checklist-item input[type="checkbox"] {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+.checklist-item .item-text.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.add-item-btn, .remove-item-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 5px;
+}
+
+.checklist-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.checklist-controls button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.delete-checklist-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+.edit-checklist-btn {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.complete-checklist-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin-top: 15px;
+    float: right;
+}

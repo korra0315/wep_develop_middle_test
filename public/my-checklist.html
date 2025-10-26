@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 체크리스트</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="my-checklist.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo-link">
+            <div class="logo">travel place</div>
+        </a>
+        <nav>
+            <a href="/signup.html" class="signup-link">계정생성</a>
+            <a href="/login.html" class="login-btn">로그인</a>
+            <div class="user-dropdown"></div>
+        </nav>
+    </header>
+
+    <main class="checklist-main">
+        <nav class="account-nav">
+            <!-- account-nav.html 내용이 여기에 동적으로 삽입됩니다. -->
+        </nav>
+        <section class="checklist-section">
+            <div class="checklist-container" id="checklist-container">
+                <div class="checklist-category">
+                    <h2>국내 체크리스트 <button class="add-checklist-btn" data-type="domestic">+</button></h2>
+                    <div class="checklists" id="domestic-checklists">
+                        <!-- 국내 체크리스트들이 여기에 추가됩니다. -->
+                    </div>
+                </div>
+                <div class="checklist-category">
+                    <h2>해외 체크리스트 <button class="add-checklist-btn" data-type="overseas">+</button></h2>
+                    <div class="checklists" id="overseas-checklists">
+                        <!-- 해외 체크리스트들이 여기에 추가됩니다. -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="my-checklist.js"></script>
+    <script>
+        // account-nav.html을 동적으로 로드하여 삽입합니다.
+        fetch('account-nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('.account-nav').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

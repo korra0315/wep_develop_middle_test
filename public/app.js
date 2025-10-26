@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="dropdown-content">
         <a href="/account-info.html">계정정보</a>
         <a href="/my-schedule.html">내일정</a>
+        <a href="/my-checklist.html">내 체크리스트</a>
         <a href="#" id="logout-link">로그아웃</a>
       </div>
     `;

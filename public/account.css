@@ -1,0 +1,53 @@
+.account-container {
+    display: flex;
+}
+
+.account-nav {
+    width: 200px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+}
+
+.account-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-nav li a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+.account-nav li a:hover {
+    background-color: #e9ecef;
+}
+
+#logout-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.account-content {
+    padding: 20px;
+    flex: 1;
+}
+
+.info-box {
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.info-box p {
+    margin: 0 0 10px;
+}

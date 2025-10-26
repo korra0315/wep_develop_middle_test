@@ -18,6 +18,14 @@ header {
   padding: 15px 30px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo {
@@ -43,6 +51,40 @@ header {
   color: gray;
   text-decoration: underline;
   margin-right: 15px;
+}
+
+/* Login Box */
+.login-box {
+  width: 300px;
+  margin: 100px auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box; /* To include padding in the width */
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-box input::placeholder {
+  color: #aaa;
 }
 
 /* Banner */

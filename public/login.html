@@ -7,22 +7,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Login</h1>
+    <div class="login-box">
         <form id="login-form">
-            <div class="form-group">
-                <label for="email-id">Email or ID</label>
-                <input type="text" id="email-id" name="email-id" required>
-                <p class="error-message" id="email-id-error"></p>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <p class="error-message" id="password-error"></p>
-            </div>
-            <button type="submit">Login</button>
+            <input type="text" id="email-id" name="email-id" placeholder="이메일 또는 아이디" required>
+            <input type="password" id="password" name="password" placeholder="비밀번호" required>
+            <button type="submit">로그인</button>
         </form>
-        <button id="signup-button">Create Account</button>
     </div>
     <script src="login.js"></script>
 </body>

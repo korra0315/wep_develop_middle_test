@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const userDropdown = document.querySelector('.user-dropdown');
-  const signupBtn = document.querySelector('.signup-btn');
 
   const checkUserStatus = async () => {
     try {
@@ -41,30 +40,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const renderLoggedIn = (user) => {
     userDropdown.innerHTML = `
-      <button class="user-btn">${user.id}</button>
+      <button class="user-btn">${user.id} &#9662;</button>
       <div class="dropdown-content">
-        <a href="/account-info">계정정보</a>
-        <a href="/my-schedule">내일정</a>
-        <a href="/logout">로그아웃</a>
+        <a href="/account-info.html">계정정보</a>
+        <a href="/my-schedule.html">내일정</a>
+        <a href="#" id="logout-link">로그아웃</a>
       </div>
     `;
-    signupBtn.style.display = 'none';
+
+    const logoutLink = document.getElementById('logout-link');
+    logoutLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = '/';
+    });
   };
 
   const renderLoggedOut = () => {
-    userDropdown.innerHTML = '<button class="login-btn">로그인</button>';
-    signupBtn.style.display = 'block';
-
-    const loginBtn = document.querySelector('.login-btn');
-    loginBtn.addEventListener('click', () => {
-      window.location.href = '/login.html';
-    });
+    userDropdown.innerHTML = '';
   };
   
-  signupBtn.addEventListener('click', () => {
-      window.location.href = '/signup.html';
-  });
-
   checkUserStatus();
 
   // Trip list functionality

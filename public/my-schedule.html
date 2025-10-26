@@ -5,14 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Schedule</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="account.css">
 </head>
 <body>
-    <div class="container">
-        <h1>My Schedule</h1>
-        <div id="schedule-content">
-            <!-- Schedule content will be loaded here -->
+    <div class="account-container">
+        <div id="nav-placeholder"></div>
+        <div class="account-content">
+            <h1>내일정</h1>
+            <div id="schedule-content">
+                <!-- Schedule content will be loaded here -->
+            </div>
         </div>
     </div>
+    <script>
+        fetch('account-nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+    </script>
     <script src="my-schedule.js"></script>
 </body>
 </html>

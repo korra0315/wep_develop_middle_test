@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (response.ok) {
         const user = await response.json();
         userInfoDiv.innerHTML = `
-            <p><strong>First Name:</strong> ${user.firstName}</p>
-            <p><strong>Last Name:</strong> ${user.lastName}</p>
-            <p><strong>ID:</strong> ${user.id}</p>
-            <p><strong>Email:</strong> ${user.email}</p>
-            <p><strong>Phone:</strong> ${user.phone}</p>
+            <p><strong>이름:</strong> ${user.firstName}</p>
+            <p><strong>성:</strong> ${user.lastName}</p>
+            <p><strong>아이디:</strong> ${user.id}</p>
+            <p><strong>이메일:</strong> ${user.email}</p>
+            <p><strong>전화번호:</strong> ${user.phone}</p>
         `;
     } else {
         window.location.href = '/login.html';

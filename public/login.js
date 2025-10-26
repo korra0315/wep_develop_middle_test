@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const emailIdError = document.getElementById('email-id-error');
     const passwordError = document.getElementById('password-error');
-    const signupButton = document.getElementById('signup-button');
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -32,9 +31,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 passwordError.textContent = errorData.message;
             }
         }
-    });
-
-    signupButton.addEventListener('click', () => {
-        window.location.href = '/signup.html';
     });
 });

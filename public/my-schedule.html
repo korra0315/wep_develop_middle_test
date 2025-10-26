@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="account.css">
 </head>
 <body>
+    <header>
+        <a href="/" class="logo-link">
+            <div class="logo">Travel Planner</div>
+        </a>
+    </header>
     <div class="account-container">
         <div id="nav-placeholder"></div>
         <div class="account-content">
@@ -22,6 +27,11 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-placeholder').innerHTML = data;
+                const logoutBtn = document.getElementById('logout-btn');
+                logoutBtn.addEventListener('click', async () => {
+                    await fetch('/logout');
+                    window.location.href = '/';
+                });
             });
     </script>
     <script src="my-schedule.js"></script>

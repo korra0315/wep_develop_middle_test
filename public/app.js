@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const userDropdown = document.querySelector('.user-dropdown');
+  const signupLink = document.querySelector('.signup-link');
+  const loginBtn = document.querySelector('.login-btn');
 
   const checkUserStatus = async () => {
     try {
@@ -39,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const renderLoggedIn = (user) => {
+    signupLink.style.display = 'none';
+    loginBtn.style.display = 'none';
     userDropdown.innerHTML = `
       <button class="user-btn">${user.id} &#9662;</button>
       <div class="dropdown-content">
@@ -51,12 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutLink = document.getElementById('logout-link');
     logoutLink.addEventListener('click', async (e) => {
       e.preventDefault();
-      await fetch('/api/logout', { method: 'POST' });
+      await fetch('/logout');
       window.location.href = '/';
     });
   };
 
   const renderLoggedOut = () => {
+    signupLink.style.display = 'block';
+    loginBtn.style.display = 'block';
     userDropdown.innerHTML = '';
   };
   

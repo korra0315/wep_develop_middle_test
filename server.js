@@ -9,12 +9,12 @@ const port = 3000;
 
 const LOG_FILE = '/home/korra0315/test2/log.txt';
 const USER_INFO_FILE = '/home/korra0315/test2/userinfo.json';
+const USER_DATA_FILE = '/home/korra0315/test2/userdata.json';
 
 // Helper function for logging
 const logEvent = (message) => {
   const timestamp = new Date().toISOString();
-  fs.appendFileSync(LOG_FILE, `[${timestamp}] ${message}
-`);
+  fs.appendFileSync(LOG_FILE, `[${timestamp}] ${message}\n`);
 };
 
 // Initialize log file
@@ -31,9 +31,6 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-let trips = [];
-let nextId = 1;
-
 // Load user data from file
 let users = [];
 if (fs.existsSync(USER_INFO_FILE)) {
@@ -41,9 +38,21 @@ if (fs.existsSync(USER_INFO_FILE)) {
   users = JSON.parse(data);
 }
 
+// Load schedule data from file
+let scheduleData = { schedules: {} };
+if (fs.existsSync(USER_DATA_FILE)) {
+    const data = fs.readFileSync(USER_DATA_FILE);
+    scheduleData = JSON.parse(data);
+}
+
 // Helper function to save user data
 const saveUsers = () => {
   fs.writeFileSync(USER_INFO_FILE, JSON.stringify(users, null, 2));
+};
+
+// Helper function to save schedule data
+const saveSchedules = () => {
+    fs.writeFileSync(USER_DATA_FILE, JSON.stringify(scheduleData, null, 2));
 };
 
 app.post('/api/signup', (req, res) => {
@@ -99,7 +108,8 @@ app.get('/api/user', (req, res) => {
 app.get('/account-info', (req, res) => {
     if (req.session.user) {
         res.sendFile(__dirname + '/public/account-info.html');
-    } else {
+    }
+    else {
         res.redirect('/login.html');
     }
 });
@@ -107,37 +117,50 @@ app.get('/account-info', (req, res) => {
 app.get('/my-schedule', (req, res) => {
     if (req.session.user) {
         res.sendFile(__dirname + '/public/my-schedule.html');
-    } else {
+    }
+    else {
         res.redirect('/login.html');
     }
 });
 
-
-app.get('/api/trips', (req, res) => {
-  res.json(trips);
+app.get('/api/schedules/:userId', (req, res) => {
+    const { userId } = req.params;
+    const userSchedules = scheduleData.schedules[userId] || [];
+    res.json(userSchedules);
 });
 
-app.post('/api/trips', (req, res) => {
-  const { title, startDate, endDate } = req.body;
-  if (!title || !startDate || !endDate) {
-    return res.status(400).json({ error: 'Title, startDate, and endDate are required' });
-  }
-  const newTrip = { id: nextId++, title, startDate, endDate };
-  trips.push(newTrip);
-  logEvent(`Trip created: ${title}`);
-  res.status(201).json(newTrip);
+app.post('/api/schedules/:userId', (req, res) => {
+    const { userId } = req.params;
+    const newSchedule = req.body;
+    if (!scheduleData.schedules[userId]) {
+        scheduleData.schedules[userId] = [];
+    }
+
+    const index = scheduleData.schedules[userId].findIndex(s => s.id === newSchedule.id);
+    if (index !== -1) {
+        scheduleData.schedules[userId][index] = newSchedule;
+        logEvent(`Schedule updated: ${newSchedule.title}`);
+    } else {
+        scheduleData.schedules[userId].push(newSchedule);
+        logEvent(`Schedule created: ${newSchedule.title}`);
+    }
+
+    saveSchedules();
+    res.status(201).json(newSchedule);
 });
 
-app.delete('/api/trips/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = trips.findIndex(trip => trip.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: 'Trip not found' });
-  }
-  const deletedTrip = trips[index];
-  trips.splice(index, 1);
-  logEvent(`Trip deleted: ${deletedTrip.title}`);
-  res.status(204).send();
+app.delete('/api/schedules/:userId/:scheduleId', (req, res) => {
+    const { userId, scheduleId } = req.params;
+    if (scheduleData.schedules[userId]) {
+        const index = scheduleData.schedules[userId].findIndex(s => s.id === scheduleId);
+        if (index !== -1) {
+            const deletedSchedule = scheduleData.schedules[userId].splice(index, 1);
+            logEvent(`Schedule deleted: ${deletedSchedule[0].title}`);
+            saveSchedules();
+            return res.status(204).send();
+        }
+    }
+    res.status(404).json({ error: 'Schedule not found' });
 });
 
 app.listen(port, () => {

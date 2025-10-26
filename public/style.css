@@ -1,0 +1,20 @@
+
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+#trip-list {
+  margin-bottom: 20px;
+}
+
+.trip-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#new-trip-form input {
+  display: block;
+  margin-bottom: 10px;
+}

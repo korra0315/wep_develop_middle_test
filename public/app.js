@@ -24,13 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const userDropdown = document.querySelector('.user-dropdown');
   const signupLink = document.querySelector('.signup-link');
   const loginBtn = document.querySelector('.login-btn');
+  const tripList = document.getElementById('trip-list');
 
   const checkUserStatus = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
       renderLoggedIn(user);
+      displaySchedules(user.id);
     } else {
       renderLoggedOut();
+      displaySchedules(null);
     }
   };
 
@@ -58,6 +61,32 @@ document.addEventListener('DOMContentLoaded', () => {
     signupLink.style.display = 'block';
     loginBtn.style.display = 'block';
     userDropdown.innerHTML = '';
+  };
+
+  const displaySchedules = (userId) => {
+    if (!userId) {
+      tripList.innerHTML = '<p><a href="/login.html">로그인</a>하여 일정을 확인하세요.</p>';
+      return;
+    }
+
+    const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
+    const userSchedules = allSchedules.schedules[userId] || [];
+
+    if (userSchedules.length === 0) {
+      tripList.innerHTML = '<p>아무 일정도 없습니다.</p>';
+      return;
+    }
+
+    tripList.innerHTML = '';
+    userSchedules.forEach(schedule => {
+      const scheduleElement = document.createElement('div');
+      scheduleElement.classList.add('trip-item'); // You might need to style this class
+      scheduleElement.innerHTML = `
+        <h4>${schedule.title}</h4>
+        <p>${schedule.items.length}개의 항목</p>
+      `;
+      tripList.appendChild(scheduleElement);
+    });
   };
   
   checkUserStatus();

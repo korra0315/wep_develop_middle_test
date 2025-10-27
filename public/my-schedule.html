@@ -35,7 +35,8 @@
                     await fetch('/logout');
                     window.location.href = '/';
                 });
-            });
+            })
+            .catch(error => console.error('Error loading navigation:', error));
     </script>
     <script src="my-schedule.js"></script>
 </body>

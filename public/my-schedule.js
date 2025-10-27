@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addScheduleBtn) {
         addScheduleBtn.addEventListener('click', () => {
             if (userId) {
+                if (scheduleContent.querySelector('p')) {
+                    scheduleContent.innerHTML = '';
+                }
                 new Schedule(scheduleContent);
             }
             else {
@@ -44,11 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
             this.isEditing = !data;
             this.element = document.createElement('div');
             this.element.classList.add('schedule-item');
-            if (this.isEditing) {
-                this.container.innerHTML = ''; // Clear the container for the new schedule form
-            }
-            this.container.appendChild(this.element);
             this.render();
+            if (this.isEditing) {
+                this.container.prepend(this.element);
+            } else {
+                this.container.appendChild(this.element);
+            }
             this.attachEventListeners();
         }
 
@@ -233,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('schedules', JSON.stringify(allSchedules));
             this.isEditing = false;
-            this.render();
             fetchSchedules();
         }
 

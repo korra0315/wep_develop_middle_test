@@ -1,41 +1,5 @@
 {
   "checklists": {
-    "abc123": [
-      {
-        "id": "1761494019490",
-        "type": "domestic",
-        "title": "새로운 체크리스트",
-        "items": [],
-        "completed": true
-      },
-      {
-        "id": "1761494029173",
-        "type": "overseas",
-        "title": "새로운 체크리스트",
-        "items": [
-          {
-            "text": "여권",
-            "completed": false
-          },
-          {
-            "text": "환전",
-            "completed": false
-          },
-          {
-            "text": "항공편",
-            "completed": false
-          },
-          {
-            "text": "숙박",
-            "completed": false
-          },
-          {
-            "text": "유심",
-            "completed": false
-          }
-        ],
-        "completed": true
-      }
-    ]
+    "abc123": []
   }
 }

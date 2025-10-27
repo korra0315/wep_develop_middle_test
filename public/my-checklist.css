@@ -12,25 +12,21 @@
     margin: 0 auto;
 }
 
-.checklist-category h2 {
-    font-size: 1.5em;
-    margin-bottom: 15px;
+.checklist-header-main {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .add-checklist-btn {
-    margin-left: 10px;
-    font-size: 1.2em;
-    cursor: pointer;
-    border: none;
-    background: #4CAF50;
+    background-color: #4CAF50;
     color: white;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
 }
 
 .checklist-box {
@@ -39,26 +35,58 @@
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    position: relative;
 }
 
 .checklist-box.completed {
     background-color: #f0f0f0;
 }
 
+.checklist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checklist-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
 .checklist-title-input {
-    width: 100%;
+    flex-grow: 1;
     border: none;
     border-bottom: 2px solid #ccc;
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 15px;
     padding: 5px;
 }
 
 .checklist-title-input:focus {
     outline: none;
     border-bottom-color: #4CAF50;
+}
+
+.checklist-controls button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.delete-checklist-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+.edit-checklist-btn {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.checklist-items {
+    margin-bottom: 15px;
 }
 
 .checklist-item {
@@ -80,41 +108,36 @@
     height: 20px;
 }
 
+.checklist-item .item-text {
+    flex-grow: 1;
+}
+
 .checklist-item .item-text.completed {
     text-decoration: line-through;
     color: #888;
 }
 
-.add-item-btn, .remove-item-btn {
+.remove-item-btn {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 1.2em;
     margin-left: 5px;
+    color: #f44336;
 }
 
-.checklist-controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+.checklist-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.checklist-controls button {
-    border: none;
-    padding: 8px 12px;
+.add-item-btn {
+    background: none;
+    border: 1px solid #ccc;
     border-radius: 5px;
+    padding: 8px 12px;
     cursor: pointer;
-    margin-left: 5px;
-}
-
-.delete-checklist-btn {
-    background-color: #f44336; /* Red */
-    color: white;
-}
-
-.edit-checklist-btn {
-    background-color: #2196F3; /* Blue */
-    color: white;
 }
 
 .complete-checklist-btn {
@@ -124,7 +147,4 @@
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
-    display: block;
-    margin-top: 15px;
-    float: right;
 }

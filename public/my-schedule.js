@@ -12,18 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleContent.innerHTML = '<p><a href="/login.html">로그인</a>하여 일정을 관리하세요.</p>';
     }
 
-    function fetchSchedules() {
+    async function fetchSchedules() {
         if (!userId) return;
-        const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
-        const userSchedules = allSchedules.schedules[userId] || [];
+        try {
+            const response = await fetch(`/api/schedules/${userId}`);
+            const userSchedules = await response.json();
 
-        scheduleContent.innerHTML = '';
-        if (userSchedules.length === 0) {
-            scheduleContent.innerHTML = '<p>아무 일정도 없습니다 +버튼을 눌러 새로운 여행 기획하기!!</p>';
+            scheduleContent.innerHTML = '';
+            if (userSchedules.length === 0) {
+                scheduleContent.innerHTML = '<p>내일정에 아무일정도 없다면 +버튼을 눌러 새로운 계획을 세워보세요</p>';
+            }
+            userSchedules.forEach(scheduleData => {
+                new Schedule(scheduleContent, scheduleData);
+            });
+        } catch (error) {
+            console.error('Error fetching schedules:', error);
+            scheduleContent.innerHTML = '<p>일정을 불러오는데 실패했습니다.</p>';
         }
-        userSchedules.forEach(scheduleData => {
-            new Schedule(scheduleContent, scheduleData);
-        });
     }
 
     if (addScheduleBtn) {
@@ -33,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     scheduleContent.innerHTML = '';
                 }
                 new Schedule(scheduleContent);
-            }
-            else {
+            } else {
                 alert("로그인이 필요합니다.");
             }
         });
@@ -43,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     class Schedule {
         constructor(container, data = null) {
             this.container = container;
+            this.isNew = !data;
             this.data = data || { id: Date.now().toString(), title: '', items: [] };
             this.isEditing = !data;
             this.element = document.createElement('div');
@@ -74,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             this.element.innerHTML = `
-                <input type="text" class="schedule-title" placeholder="새로운 일정" value="${this.data.title}">
+                <input type="text" class="schedule-title" placeholder="제목" value="${this.data.title}">
                 <div class="itinerary-box">${itemsHTML}</div>
                 <button class="add-date-btn">+ 날짜 추가</button>
-                <button class="save-schedule-btn">일정 저장하기</button>
+                <button class="save-schedule-btn">일정 완성하기</button>
             `;
         }
 
@@ -105,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const [endHour, endMinute] = item.endTime.split(':');
             return `
                 <div class="itinerary-item">
-                    <input type="text" class="itinerary-text" placeholder="내용" value="${item.text}">
+                    <input type="text" class="itinerary-text" placeholder="일정" value="${item.text}">
                     <select class="hour-select start-hour">${this.getHourOptions(startHour)}</select>:
                     <select class="minute-select start-minute">${this.getMinuteOptions(startMinute)}</select> ~
                     <select class="hour-select end-hour">${this.getHourOptions(endHour)}</select>:
@@ -142,8 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             this.element.innerHTML = `
                 ${completedHTML}
-                <button class="delete-schedule-btn">일정삭제하기</button>
-                <button class="edit-schedule-btn">일정수정하기</button>
+                <button class="delete-schedule-btn">삭제</button>
+                <button class="edit-schedule-btn">수정</button>
             `;
         }
 
@@ -181,20 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
             this.render();
         }
 
-        delete() {
+        async delete() {
             if (!userId) return;
-            const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
-            if (allSchedules.schedules[userId]) {
-                const index = allSchedules.schedules[userId].findIndex(s => s.id === this.data.id);
-                if (index !== -1) {
-                    allSchedules.schedules[userId].splice(index, 1);
-                    localStorage.setItem('schedules', JSON.stringify(allSchedules));
+            try {
+                const response = await fetch(`/api/schedules/${userId}/${this.data.id}`, { method: 'DELETE' });
+                if (response.ok) {
                     this.element.remove();
+                } else {
+                    alert('일정 삭제에 실패했습니다.');
                 }
+            } catch (error) {
+                console.error('Error deleting schedule:', error);
+                alert('일정 삭제 중 오류가 발생했습니다.');
             }
         }
 
-        save() {
+        async save() {
             if (!userId) return;
 
             const title = this.element.querySelector('.schedule-title').value;
@@ -223,21 +230,31 @@ document.addEventListener('DOMContentLoaded', () => {
             this.data.title = title;
             this.data.items = items;
 
-            const allSchedules = JSON.parse(localStorage.getItem('schedules')) || { schedules: {} };
-            if (!allSchedules.schedules[userId]) {
-                allSchedules.schedules[userId] = [];
-            }
+            const method = this.isNew ? 'POST' : 'PUT';
+            const url = this.isNew ? `/api/schedules/${userId}` : `/api/schedules/${userId}/${this.data.id}`;
 
-            const index = allSchedules.schedules[userId].findIndex(s => s.id === this.data.id);
-            if (index !== -1) {
-                allSchedules.schedules[userId][index] = this.data;
-            } else {
-                allSchedules.schedules[userId].push(this.data);
-            }
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.data)
+                });
 
-            localStorage.setItem('schedules', JSON.stringify(allSchedules));
-            this.isEditing = false;
-            fetchSchedules();
+                if (response.ok) {
+                    if (this.isNew) {
+                        const savedSchedule = await response.json();
+                        this.data = savedSchedule;
+                        this.isNew = false;
+                    }
+                    this.isEditing = false;
+                    fetchSchedules();
+                } else {
+                    alert('일정 저장에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error saving schedule:', error);
+                alert('일정 저장 중 오류가 발생했습니다.');
+            }
         }
 
         getHourOptions(selectedHour) {

@@ -1,5 +1,34 @@
 {
   "checklists": {
-    "abc123": []
+    "abc123": [
+      {
+        "id": "1761563016684",
+        "type": "overseas",
+        "title": "새로운 체크리스트",
+        "items": [
+          {
+            "text": "여권",
+            "completed": false
+          },
+          {
+            "text": "환전",
+            "completed": true
+          },
+          {
+            "text": "항공편",
+            "completed": true
+          },
+          {
+            "text": "숙박",
+            "completed": false
+          },
+          {
+            "text": "유심",
+            "completed": false
+          }
+        ],
+        "completed": true
+      }
+    ]
   }
 }

@@ -78,16 +78,53 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    tripList.innerHTML = '';
+    let closestSchedule = null;
+    let closestDate = null;
+
     userSchedules.forEach(schedule => {
+      if (schedule.items && schedule.items.length > 0) {
+        schedule.items.forEach(item => {
+          const itemDate = new Date(item.date);
+          const now = new Date();
+          now.setHours(0, 0, 0, 0); 
+
+          if (itemDate >= now) {
+            if (!closestDate || itemDate < closestDate) {
+              closestDate = itemDate;
+              closestSchedule = schedule;
+            }
+          }
+        });
+      }
+    });
+
+    if (closestSchedule) {
+      const closestDayItems = closestSchedule.items.filter(item => {
+        const itemDate = new Date(item.date);
+        return itemDate.getFullYear() === closestDate.getFullYear() &&
+               itemDate.getMonth() === closestDate.getMonth() &&
+               itemDate.getDate() === closestDate.getDate();
+      });
+
+      tripList.innerHTML = '';
       const scheduleElement = document.createElement('div');
-      scheduleElement.classList.add('trip-item'); // You might need to style this class
+      scheduleElement.classList.add('trip-item');
+      
+      let itemsHtml = '<ul>';
+      closestDayItems.forEach(item => {
+        itemsHtml += `<li>${item.text} (${item.startTime} - ${item.endTime})</li>`;
+      });
+      itemsHtml += '</ul>';
+
       scheduleElement.innerHTML = `
-        <h4>${schedule.title}</h4>
-        <p>${schedule.items.length}개의 항목</p>
+        <h4>${closestSchedule.title}</h4>
+        <p>가장 가까운 일정 (${closestDate.toLocaleDateString()})</p>
+        ${itemsHtml}
       `;
       tripList.appendChild(scheduleElement);
-    });
+    } else {
+      tripList.innerHTML = '<p>예정된 일정이 없습니다.</p>';
+    }
   };
   
   checkUserStatus();
